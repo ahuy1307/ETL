@@ -151,7 +151,7 @@ class ETL:
         review_data = {
             'dates': self.extract_text(review, "time", itemprop="datePublished"),
             'customer_names': self.extract_text(review, "span", itemprop="name"),
-            'countries': self.extract_country(review),
+            'country': self.extract_country(review),
             'review_bodies': self.extract_text(review, "div", itemprop="reviewBody")
         }
 
@@ -347,7 +347,7 @@ class ETL:
             'Month Flown Number': 'month_fly_num',
             'Year Flown': 'year_fly',
             'Month Year Flown': 'month_year_fly',
-            'countries': 'country',
+            'country': 'country',
             'Aircraft': 'aircraft',
             'Type Of Traveller': 'type',
             'Seat Type': 'seat_type',
