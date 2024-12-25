@@ -116,8 +116,13 @@ class ETL:
             AppLog.info(f"Scraping page {page}")
 
             url = f"{self.base_url}/page/{page}/?sortby=post_date%3ADesc&pagesize={self.page_size}"
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+                'Accept-Language': 'en-US,en;q=0.9',
+                'Referer': 'https://www.airlinequality.com/',
+            }
             try:
-                response = requests.get(url)
+                response = requests.get(url, headers=headers)
                 response.raise_for_status()
             except requests.RequestException as e:
                 AppLog.error(f"Failed to fetch page {page}: {e}")
