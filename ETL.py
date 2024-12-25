@@ -120,6 +120,9 @@ class ETL:
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
                 'Accept-Language': 'en-US,en;q=0.9',
                 'Referer': 'https://www.airlinequality.com/',
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+                'Connection': 'keep-alive',
+                'Cache-Control': 'max-age=0',
             }
             try:
                 response = requests.get(url, headers=headers)
@@ -134,6 +137,9 @@ class ETL:
             for review in reviews:
                 review_data = self.extract_review_data(review)
                 reviews_data.append(review_data)
+            
+            import time
+            time.sleep(5)
 
         df = pd.DataFrame(reviews_data)
         return df
@@ -347,7 +353,7 @@ class ETL:
             'Month Flown Number': 'month_fly_num',
             'Year Flown': 'year_fly',
             'Month Year Flown': 'month_year_fly',
-            'country': 'country',
+            'countries': 'country',
             'Aircraft': 'aircraft',
             'Type Of Traveller': 'type',
             'Seat Type': 'seat_type',
