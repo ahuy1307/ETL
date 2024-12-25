@@ -62,6 +62,9 @@ class ETL:
             gcs_uri = "gs://group-8-445019-us-notebooks/group-8-445019-10957479e54c.json"
 
             # Tách bucket name và file name từ GCS URI
+            local_path = "/app/service-account.json"  # Đường dẫn cục bộ
+
+            # Tách bucket name và file name từ GCS URI
             gcs_uri_parts = gcs_uri.replace("gs://", "").split("/", 1)
             bucket_name = gcs_uri_parts[0]
             file_name = gcs_uri_parts[1]
@@ -71,11 +74,13 @@ class ETL:
             bucket = storage_client.bucket(bucket_name)
             blob = bucket.blob(file_name)
 
-            # Đọc nội dung file JSON
-            service_account_json = json.loads(blob.download_as_text())
+            # Tải file từ GCS và lưu vào đường dẫn cục bộ
+            blob.download_to_filename(local_path)
 
-            # Tạo BigQuery client từ JSON
-            client = bigquery.Client.from_service_account_info(service_account_json)
+            # Sau khi file JSON đã được tải xuống và lưu tại local_path, sử dụng file path này cho BigQuery client
+            client = bigquery.Client.from_service_account_json(local_path)
+
+            # Bây giờ bạn có thể sử dụng client để tương tác với BigQuery
             print("BigQuery client created successfully.")
             return client
         except Exception as e:

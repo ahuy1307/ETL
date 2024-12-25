@@ -26,5 +26,7 @@ RUN pip install -r /api/requirements.txt
 
 WORKDIR /api
 
+COPY service-account.json /app/service-account.json
+
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
 
