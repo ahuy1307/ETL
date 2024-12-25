@@ -1,4 +1,4 @@
-from google.cloud import bigquery
+from google.cloud import bigquery, storage
 from google.cloud.exceptions import NotFound
 from dotenv import load_dotenv
 import os
@@ -39,6 +39,46 @@ async def create_table_with_schema(client, full_table_id, schema):
         AppLog.info(f"An error occurred: {e}")
         raise
 
+async def init_client():
+            # Lấy đường dẫn tới thư mục chứa file hiện tại (schema.py)
+        # current_folder = os.path.dirname(os.path.abspath(__file__))
+
+        # # Xây dựng đường dẫn tới file JSON
+        # key_path = os.path.join(current_folder, "group-8-445019-10957479e54c.json")
+
+        # if not os.path.exists(key_path):
+        #     raise FileNotFoundError(f"Service account key file not found: {key_path}")
+
+        # # Tạo client BigQuery từ tệp JSON
+        # client = bigquery.Client.from_service_account_json(json_credentials_path=key_path)
+        # return client
+
+        # Chuyển JSON sang chuỗi và tạo client BigQuery từ chuỗi JSON
+        try:
+            # GCS URI (thay đổi theo bucket và file của bạn)
+            gcs_uri = "gs://group-8-445019-us-notebooks/group-8-445019-10957479e54c.json"
+
+            # Tách bucket name và file name từ GCS URI
+            gcs_uri_parts = gcs_uri.replace("gs://", "").split("/", 1)
+            bucket_name = gcs_uri_parts[0]
+            file_name = gcs_uri_parts[1]
+
+            # Tải nội dung file JSON từ GCS
+            storage_client = storage.Client()
+            bucket = storage_client.bucket(bucket_name)
+            blob = bucket.blob(file_name)
+
+            # Đọc nội dung file JSON
+            service_account_json = json.loads(blob.download_as_text())
+
+            # Tạo BigQuery client từ JSON
+            client = bigquery.Client.from_service_account_info(service_account_json)
+            print("BigQuery client created successfully.")
+            return client
+        except Exception as e:
+            print(f"Error creating BigQuery client: {e}")
+        return None
+
 async def create_schema():
     # Get environment variables
     project_id = os.getenv("PROJECT_ID")  # Ensure this is set
@@ -59,12 +99,9 @@ async def create_schema():
     AppLog.info(f"Full Table ID: {full_table_id}")
 
 
-    # Load nội dung JSON của tệp service account từ biến môi trường
-    service_account_json = create_keyfile_dict()
-
     # Chuyển JSON sang chuỗi và tạo client BigQuery từ chuỗi JSON
     try:
-        client = bigquery.Client.from_service_account_info(service_account_json)
+        client = await init_client()
         schema = [
         bigquery.SchemaField("id", "INTEGER"),
         bigquery.SchemaField("date_review", "STRING"),

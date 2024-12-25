@@ -5,13 +5,13 @@ from bs4 import BeautifulSoup
 import pandas as pd
 # import AppLog
 from utils.logger import AppLog 
-from google.cloud import bigquery
 import numpy as np
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.interval import IntervalTrigger
 from dotenv import load_dotenv
 import time
 import json
+from google.cloud import storage, bigquery
 # Load environment variables from .env file
 load_dotenv()
 
@@ -56,14 +56,25 @@ class ETL:
         # client = bigquery.Client.from_service_account_json(json_credentials_path=key_path)
         # return client
 
-
-
-        # Load nội dung JSON của tệp service account từ biến môi trường
-        service_account_json = create_keyfile_dict()
-        print(service_account_json)
-
         # Chuyển JSON sang chuỗi và tạo client BigQuery từ chuỗi JSON
         try:
+            # GCS URI (thay đổi theo bucket và file của bạn)
+            gcs_uri = "gs://group-8-445019-us-notebooks/group-8-445019-10957479e54c.json"
+
+            # Tách bucket name và file name từ GCS URI
+            gcs_uri_parts = gcs_uri.replace("gs://", "").split("/", 1)
+            bucket_name = gcs_uri_parts[0]
+            file_name = gcs_uri_parts[1]
+
+            # Tải nội dung file JSON từ GCS
+            storage_client = storage.Client()
+            bucket = storage_client.bucket(bucket_name)
+            blob = bucket.blob(file_name)
+
+            # Đọc nội dung file JSON
+            service_account_json = json.loads(blob.download_as_text())
+
+            # Tạo BigQuery client từ JSON
             client = bigquery.Client.from_service_account_info(service_account_json)
             print("BigQuery client created successfully.")
             return client
