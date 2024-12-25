@@ -94,7 +94,7 @@ class ETL:
         AppLog.info(self.base_url)
         parsed_content = BeautifulSoup(response.content, 'html.parser')
         if parsed_content is None or parsed_content.find('div', class_='pagination-total') is None:
-            return 0
+            return 10
         div_content = parsed_content.find('div', class_='pagination-total').text
         total_reviews = int(div_content.split('of')[1].split('Reviews')[0].strip())
         page = total_reviews / self.page_size
@@ -262,7 +262,7 @@ class ETL:
 
     # -------------------- TRANSFORM FUNCTIONS --------------------
     def clean_country(self, df: pd.DataFrame) -> pd.DataFrame:
-        df['countries'] = df['countries'].str.replace(r'[()]', '', regex=True)
+        df['country'] = df['country'].str.replace(r'[()]', '', regex=True)
         return df
     def clean_review(self,df: pd.DataFrame) -> pd.DataFrame:
         if 'review_bodies' not in df.columns:
