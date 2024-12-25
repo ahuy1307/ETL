@@ -26,6 +26,9 @@ def create_keyfile_dict():
     return variables_keys
 async def create_table_with_schema(client, full_table_id, schema):
     """Creates a BigQuery table with the specified schema."""
+    if not client:
+        raise ValueError("Client is required.")
+    
     try:
         # Check if the table already exists
         table = client.get_table(full_table_id)
@@ -64,6 +67,7 @@ async def create_schema():
     service_account_json = create_keyfile_dict()
 
     # Chuyển JSON sang chuỗi và tạo client BigQuery từ chuỗi JSON
+    client = None
     try:
         client = bigquery.Client.from_service_account_info(service_account_json)
         AppLog.info("BigQuery client created successfully.")
