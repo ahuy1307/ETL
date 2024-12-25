@@ -60,6 +60,7 @@ class ETL:
 
         # Load nội dung JSON của tệp service account từ biến môi trường
         service_account_json = create_keyfile_dict()
+        print(service_account_json)
 
         # Chuyển JSON sang chuỗi và tạo client BigQuery từ chuỗi JSON
         try:
