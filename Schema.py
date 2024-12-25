@@ -87,7 +87,7 @@ async def init_client():
 async def create_schema():
     # Get environment variables
     project_id = os.getenv("PROJECT_ID")  # Ensure this is set
-    dataset_id = os.getenv("DATASET_ID")  # Ensure this is set
+    dataset_id = "group-8-445019.visualization"  # Ensure this is set
     table_id = os.getenv("TABLE_ID")      # Ensure this is set
 
     # AppLog.info values for debugging
@@ -100,7 +100,7 @@ async def create_schema():
         raise ValueError("Ensure PROJECT_ID, DATASET_ID, and TABLE_ID are set in environment variables.")
 
     # Combine to form the full table reference
-    full_table_id = f"{project_id}.{dataset_id}.{table_id}"
+    full_table_id = f"{dataset_id}.{table_id}"
     AppLog.info(f"Full Table ID: {full_table_id}")
 
 

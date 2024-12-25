@@ -38,7 +38,7 @@ class ETL:
         self.base_url = os.getenv("BASE_URL")
         self.page_size = int(os.getenv("PAGE_SIZE"))
         self.project_id = os.getenv("PROJECT_ID")
-        self.dataset_id = os.getenv("DATASET_ID")
+        self.dataset_id = "group-8-445019.visualization"
         self.table_id = os.getenv("TABLE_ID")
         self.client = self.init_client()
 
@@ -93,6 +93,8 @@ class ETL:
         response = requests.get(self.base_url)
         AppLog.info(self.base_url)
         parsed_content = BeautifulSoup(response.content, 'html.parser')
+        if parsed_content is None or parsed_content.find('div', class_='pagination-total') is None:
+            return 0
         div_content = parsed_content.find('div', class_='pagination-total').text
         total_reviews = int(div_content.split('of')[1].split('Reviews')[0].strip())
         page = total_reviews / self.page_size

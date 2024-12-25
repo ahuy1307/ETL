@@ -13,7 +13,7 @@ load_dotenv()
 BASE_URL = os.getenv("BASE_URL")
 PAGE_SIZE = int(os.getenv("PAGE_SIZE"))
 PROJECT_ID = os.getenv("PROJECT_ID")
-DATASET_ID = os.getenv("DATASET_ID")
+DATASET_ID = "group-8-445019.visualization"
 TABLE_ID = os.getenv("TABLE_ID")
 
 async def job():
